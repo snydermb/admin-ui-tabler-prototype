@@ -39,11 +39,18 @@ gulp.task('styles-plugins', function () {
         .pipe(gulp.dest('.'));
 });
 
-gulp.task('watch', ['styles', 'styles-plugins'], function() {
-    gulp.watch('src/assets/scss/**/*.scss', ['styles']);
-    gulp.watch('src/assets/plugins/**/*.scss', ['styles-plugins']);
+gulp.task('watch:styles', function () {
+        return gulp.watch('src/assets/scss/**/*.scss', gulp.series('styles'));
 });
 
-gulp.task('build', ['styles', 'styles-plugins']);
+gulp.task('watch:styles-plugins', function () {
+        return gulp.watch('src/assets/plugins/**/*.scss', gulp.series('styles-plugins'));
+});
 
-gulp.task('default', ['build']);
+gulp.task('watch', 
+    gulp.parallel('styles', 'styles-plugins'), 
+    gulp.series('watch:styles', 'watch:styles-plugins'));
+
+gulp.task('build', gulp.parallel('styles', 'styles-plugins'));
+
+gulp.task('default', gulp.series('build'));
